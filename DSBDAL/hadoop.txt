@@ -1,0 +1,146 @@
+Following are commands that were to used to perform Hadoop assignment:- 
+
+
+Steps and Commands:
+-------------------
+
+1. Start Hadoop Daemons
+Command:
+start-all.sh
+Expected Output:
+Starting namenodes
+Starting datanodes
+Starting secondary namenodes
+Starting resourcemanager
+Starting nodemanagers
+
+2. Remove Previous Input/Output from HDFS
+Command:
+hdfs dfs -rm -r /input
+hdfs dfs -rm -r /output
+Expected Output (if already deleted):
+rm: `/input': No such file or directory
+rm: `/output': No such file or directory
+
+Notes:
+==> If you re-run this project and see FileAlreadyExistsException, delete the existing /input and /output directories in HDFS using hdfs dfs -rm -r.
+
+3. Create New Input Directory in HDFS
+Command: hdfs dfs -mkdir /input
+If Error occurred:- mkdir: Cannot create directory /input. Name node is in safe mode.
+debug:- hdfs dfsadmin -safemode leave
+Safe mode is OFF
+
+command again :- bash :- hdfs dfs -mkdir /input
+
+4. Prepare Local Input File
+Command: echo "hadoop is easy hadoop is powerful" > sample.txt
+
+5. Upload Input File to HDFS
+Command: hdfs dfs -put sample.txt /input
+
+6. Create WordCount Java Program
+Command: nano WordCount.java
+Paste ----> 
+
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WordCount {
+    public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
+        private final static IntWritable one = new IntWritable(1);
+        private Text word = new Text();
+
+        public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            StringTokenizer itr = new StringTokenizer(value.toString());
+            while (itr.hasMoreTokens()) {
+                word.set(itr.nextToken());
+                context.write(word, one);
+            }
+        }
+    }
+
+    public static class IntSumReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+        private IntWritable result = new IntWritable();
+
+        public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+            int sum = 0;
+            for (IntWritable val : values)
+                sum += val.get();
+            result.set(sum);
+            context.write(key, result);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "word count");
+
+        job.setJarByClass(WordCount.class);
+        job.setMapperClass(TokenizerMapper.class);
+        job.setCombinerClass(IntSumReducer.class);
+        job.setReducerClass(IntSumReducer.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}
+
+==> Notes:- File name and public class name must match. If the class is public class WordCount, the file must be named WordCount.java, else you'll get:
+wordCount.java:14: error: class WordCount is public, should be declared in a file named WordCount.java
+
+
+7. Compile and Create JAR File
+Commands:
+i. mkdir classes
+ii. javac -classpath hadoop classpath -d classes WordCount.java
+iii. jar -cvf wordcount.jar -C classes/ .
+Expected Output:
+added manifest
+adding: WordCount$IntSumReducer.class
+adding: WordCount$TokenizerMapper.class
+adding: WordCount.class
+
+8. Verify Class Files
+Command: ls classes/
+Expected Output:
+#You should see these classes
+
+WordCount$IntSumReducer.class
+WordCount$TokenizerMapper.class
+WordCount.class
+
+9. Run the Hadoop MapReduce Job
+Command: hadoop jar wordcount.jar WordCount /input /output
+Expected Output:
+map 100% reduce 100%
+Job job_... completed successfully
+
+10. List Output Files in HDFS
+Command:  hdfs dfs -ls /output
+Found 2 items
+-rw-r--r--   2 ubuntu supergroup          0 2025-04-24 19:22 /output/_SUCCESS
+-rw-r--r--   2 ubuntu supergroup         32 2025-04-24 19:22 /output/part-r-00000
+
+11. View Final Word Count Output
+Command: hdfs dfs -cat /output/part-r-00000
+Expected Output:
+easy       1
+hadoop     2
+is         2
+powerful   1
