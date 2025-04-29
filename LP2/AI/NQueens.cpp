@@ -10,7 +10,7 @@ void printBoard(vector<vector<int>> &matrix)
     {
         for (int j = 0; j < n; j++)
         {
-            cout << (matrix[i][j] == 1 ? "1 " : "0 ");
+            cout << (matrix[i][j] == 1 ? "Q " : "- ");
         }
         cout << endl;
     }
