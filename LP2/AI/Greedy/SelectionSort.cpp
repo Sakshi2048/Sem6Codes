@@ -1,7 +1,15 @@
 #include <iostream>
 #include <vector>
 using namespace std;
+/*
 
+Selection Sort
+----------------
+- comparison-based sorting algorithm.
+- Repeatedly finds the minimum element and places it at the beginning.
+Time Complexity: O(n²)
+
+*/
 void selectionSort(vector<int> &arr) {
     int n = arr.size();
     for (int i = 0; i < n - 1; i++) {
