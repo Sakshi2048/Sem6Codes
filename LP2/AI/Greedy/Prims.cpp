@@ -1,8 +1,6 @@
 /*
 Minimum Spanning Tree (MST)
 A subset of the edges in a connected, weighted graph that connects all vertices with the minimum total edge weight, and no cycles.
-
-Algorithms: Prim's and Kruskal's
 */
 
 #include <iostream>
@@ -10,41 +8,50 @@ Algorithms: Prim's and Kruskal's
 #include <limits.h>
 using namespace std;
 
-int findMinVertex(vector<int> &key, vector<bool> &mstSet, int V) {
-    int min = INT_MAX, vertex = -1;
-    for (int i = 0; i < V; i++) {
-        if (!mstSet[i] && key[i] < min) {
-            min = key[i];
-            vertex = i;
+int minVertex(vector<int> &key , vector<bool> &mst, int v )
+{
+    int minval = INT_MAX;
+    int ind = -1;
+    
+    for(int i=0; i<v; i++)
+    {
+        if(key[i]<minval && !mst[i])
+        {
+            minval = key[i];
+            ind = i;
         }
     }
-    return vertex;
+    return ind;
 }
 
-void primMST(vector<vector<int>> &graph, int V) {
-    vector<int> parent(V, -1);
-    vector<int> key(V, INT_MAX);
-    vector<bool> mstSet(V, false);
-
-    key[0] = 0; // Start from node 0
-
-    for (int count = 0; count < V - 1; count++) {
-        int u = findMinVertex(key, mstSet, V);
-        mstSet[u] = true;
-
-        for (int v = 0; v < V; v++) {
-            if (graph[u][v] && !mstSet[v] && graph[u][v] < key[v]) {
-                key[v] = graph[u][v];
-                parent[v] = u;
+void primMST(vector<vector<int>> graph,int v)
+{
+    vector<int> parent (v,-1);
+    vector<int> key(v,INT_MAX);
+    vector<bool> mst(v,false);
+    
+    int cost = 0;
+    key[0] = 0;
+    
+    for(int i=0; i<v-1; i++)
+    {
+        int u = minVertex(key,mst,v);
+        mst[u] = true;
+        
+        for(int a = 0; a<v; a++)
+        {
+            if(graph[u][a]>0 && !mst[a] && key[a]>graph[u][a])
+            {
+                key[a] = graph[u][a];
+                parent[a] = u;
             }
         }
     }
-
-    int cost = 0;
-
+    
     cout << "\nEdge \tWeight\n";
-    for (int i = 1; i < V; i++){
-        cout << parent[i] << " - " << i << "\t" << graph[i][parent[i]] << endl;
+    for(int i=1; i<v; i++)
+    {
+        cout<<parent[i]<<" - "<<i<<" \t"<<graph[i][parent[i]]<<endl;
         cost+=graph[i][parent[i]];
     }
     
@@ -64,13 +71,14 @@ int main() {
             cin >> graph[i][j];
 
     primMST(graph, V);
+    
     return 0;
 }
 
-
 /*
-Example 
+Example
 -------
+
 Enter number of vertices: 5
 Enter adjacency matrix:
 0 2 0 6 0
@@ -80,10 +88,10 @@ Enter adjacency matrix:
 0 5 7 0 0
 
 Edge 	Weight
-0 - 1	2
-1 - 2	3
-0 - 3	6
-1 - 4	5
+0 - 1 	2
+1 - 2 	3
+0 - 3 	6
+1 - 4 	5
 Total Cost = 16
 
 */
