@@ -3,42 +3,47 @@
 #include <algorithm>
 using namespace std;
 
-struct Edge {
+class Edge {
+public:
     int u, v, weight;
+    Edge(){};
+    Edge(int a, int b, int w) {
+        u = a;
+        v = b;
+        weight = w;
+    }
 };
 
 bool compare(Edge a, Edge b) {
     return a.weight < b.weight;
 }
 
-int findParent(int node, vector<int> &parent) {
-    if (parent[node] == node) return node;
-    return parent[node] = findParent(parent[node], parent); // Path compression
-}
+void kruskal(int V, vector<Edge>& edges) {
+    vector<int> component(V);
+    for (int i = 0; i < V; i++)
+        component[i] = i;
 
-void unionSet(int a, int b, vector<int> &parent) {
-    a = findParent(a, parent);
-    b = findParent(b, parent);
-    if (a != b) parent[b] = a;
-}
-
-void kruskalMST(int V, vector<Edge> &edges) {
     sort(edges.begin(), edges.end(), compare);
-    vector<int> parent(V);
-    for (int i = 0; i < V; i++) parent[i] = i;
 
-    vector<Edge> result;
+    int cost = 0;
+    cout << "Edges in the MST:" << endl;
 
     for (Edge e : edges) {
-        if (findParent(e.u, parent) != findParent(e.v, parent)) {
-            result.push_back(e);
-            unionSet(e.u, e.v, parent);
+        if (component[e.u] != component[e.v]) {
+            cout << e.u << " - " << e.v << " \t" << e.weight << endl;
+            cost += e.weight;
+
+            int oldComp = component[e.v];
+            int newComp = component[e.u];
+
+            for (int i = 0; i < V; i++) {
+                if (component[i] == oldComp)
+                    component[i] = newComp;
+            }
         }
     }
 
-    cout << "\nEdge \tWeight\n";
-    for (Edge e : result)
-        cout << e.u << " - " << e.v << "\t" << e.weight << endl;
+    cout << "Total Cost = " << cost << endl;
 }
 
 int main() {
@@ -46,12 +51,38 @@ int main() {
     cout << "Enter number of vertices and edges: ";
     cin >> V >> E;
 
-    vector<Edge> edges(E);
-    cout << "Enter edges (u v weight):\n";
+    vector<Edge> edges;
+
+    cout << "Enter edges (u v weight):" << endl;
     for (int i = 0; i < E; i++) {
-        cin >> edges[i].u >> edges[i].v >> edges[i].weight;
+        Edge e;
+        cin>>e.u>>e.v>>e.weight;
+        edges.push_back(e);
     }
 
-    kruskalMST(V, edges);
+    kruskal(V, edges);
+
     return 0;
 }
+
+/*
+Example
+-------
+
+Enter number of vertices and edges: 5 6
+Enter edges (u v weight):
+0 1 2
+0 3 6
+1 3 8
+1 2 3
+1 4 5
+4 2 7
+Edges in the MST:
+0 - 1 	2
+1 - 2 	3
+1 - 4 	5
+0 - 3 	6
+Total Cost = 16
+
+
+*/
