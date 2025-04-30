@@ -54,7 +54,7 @@ public:
             cout << "Not Found!" << endl;
     }
 
-    void BFSRecursiveUtil(queue<int> &q, vector<bool> &visited, int x, bool &found) {
+    void BFSUtil(queue<int> &q, vector<bool> &visited, int x, bool &found) {
         if (q.empty()) return;
 
         int a = q.front();
@@ -74,7 +74,7 @@ public:
             }
         }
 
-        BFSRecursiveUtil(q, visited, x, found);
+        BFSUtil(q, visited, x, found);
     }
 
     void BFSR(int s, int x) {
@@ -90,7 +90,7 @@ public:
 
         bool found = false;
         cout << "Recursive BFS: ";
-        BFSRecursiveUtil(q, visited, x, found);
+        BFSUtil(q, visited, x, found);
 
         cout << endl;
         if (found)
