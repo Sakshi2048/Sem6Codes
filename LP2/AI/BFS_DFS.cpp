@@ -89,7 +89,7 @@ public:
         q.push(s);
 
         bool found = false;
-        cout << "Recursive BFS: ";
+        cout << "Recursive BFS : ";
         BFSUtil(q, visited, x, found);
 
         cout << endl;
