@@ -40,9 +40,15 @@ void primMST(vector<vector<int>> &graph, int V) {
         }
     }
 
+    int cost = 0;
+
     cout << "\nEdge \tWeight\n";
-    for (int i = 1; i < V; i++)
+    for (int i = 1; i < V; i++){
         cout << parent[i] << " - " << i << "\t" << graph[i][parent[i]] << endl;
+        cost+=graph[i][parent[i]];
+    }
+    
+    cout<<"Total Cost = "<<cost<<endl;
 }
 
 int main() {
@@ -51,6 +57,7 @@ int main() {
     cin >> V;
 
     vector<vector<int>> graph(V, vector<int>(V));
+    
     cout << "Enter adjacency matrix:\n";
     for (int i = 0; i < V; i++)
         for (int j = 0; j < V; j++)
@@ -59,3 +66,24 @@ int main() {
     primMST(graph, V);
     return 0;
 }
+
+
+/*
+Example 
+-------
+Enter number of vertices: 5
+Enter adjacency matrix:
+0 2 0 6 0
+2 0 3 8 5
+0 3 0 0 7
+6 8 0 0 0
+0 5 7 0 0
+
+Edge 	Weight
+0 - 1	2
+1 - 2	3
+0 - 3	6
+1 - 4	5
+Total Cost = 16
+
+*/
