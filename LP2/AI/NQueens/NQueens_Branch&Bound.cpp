@@ -26,6 +26,7 @@ void placeQueen(vector<vector<int>> &board, int row, int &solutionCount,vector<b
     }
 
     for (int col = 0; col < n; col++) {
+        
         if (!cols[col] && !diag1[row - col + n - 1] && !diag2[row + col]) {
             board[row][col] = 1;
             cols[col] = true;
