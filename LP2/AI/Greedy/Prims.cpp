@@ -8,8 +8,9 @@ A subset of the edges in a connected, weighted graph that connects all vertices 
 #include <limits.h>
 using namespace std;
 
-int minVertex(vector<int> &key , vector<bool> &mst, int v )
+int minVertex(vector<int> &key , vector<bool> &mst)
 {
+    int v = mst.size();
     int minval = INT_MAX;
     int ind = -1;
     
@@ -24,8 +25,9 @@ int minVertex(vector<int> &key , vector<bool> &mst, int v )
     return ind;
 }
 
-void primMST(vector<vector<int>> graph,int v)
+void primMST(vector<vector<int>> graph)
 {
+    int v = graph.size();
     vector<int> parent (v,-1);
     vector<int> key(v,INT_MAX);
     vector<bool> mst(v,false);
@@ -35,7 +37,7 @@ void primMST(vector<vector<int>> graph,int v)
     
     for(int i=0; i<v-1; i++)
     {
-        int u = minVertex(key,mst,v);
+        int u = minVertex(key,mst);
         mst[u] = true;
         
         for(int a = 0; a<v; a++)
@@ -51,10 +53,10 @@ void primMST(vector<vector<int>> graph,int v)
     cout << "\nEdge \tWeight\n";
     for(int i=1; i<v; i++)
     {
-        cout<<parent[i]<<" - "<<i<<" \t"<<graph[i][parent[i]]<<endl;
-        cost+=graph[i][parent[i]];
+        cout<<parent[i]<<" - "<<i<<" \t"<<key[i]<<endl;
+        cost+=key[i];
     }
-    
+    cout<<endl;
     cout<<"Total Cost = "<<cost<<endl;
 }
 
@@ -70,7 +72,7 @@ int main() {
         for (int j = 0; j < V; j++)
             cin >> graph[i][j];
 
-    primMST(graph, V);
+    primMST(graph);
     
     return 0;
 }
