@@ -14,7 +14,7 @@ public:
         adj = vector<vector<int>>(V);
     }
 
-    void addEdge(int u, int v) {
+    void addEdge( int u, int v) {
         adj[u].push_back(v);
         adj[v].push_back(u);
     }

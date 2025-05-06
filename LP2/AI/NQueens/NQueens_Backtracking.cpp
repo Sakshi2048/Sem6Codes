@@ -77,8 +77,17 @@ void placeQueen(vector<vector<int>> &board, int row, int &solutionCount)
     }
 }
 
-void solve(int n)
+
+
+int main()
 {
+
+    int n;
+    cout << "Total Queens: ";
+    cin >> n;
+
+    cout << endl;
+
     // Initialize board
     vector<vector<int>> board(n, vector<int>(n, 0));
 
@@ -92,18 +101,6 @@ void solve(int n)
     {
         cout << "No solution exists!" << endl;
     }
-}
-
-int main()
-{
-
-    int n;
-    cout << "Total Queens: ";
-    cin >> n;
-
-    cout << endl;
-
-    solve(n);
     
     return 0;
 }
