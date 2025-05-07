@@ -4,67 +4,26 @@
 #include <stack>
 using namespace std;
 
-class Graph {
-    int V;
-    vector<vector<int>> adj;
+void BFS(vector<vector<int>> &adj, int s, int x) {
+    int V = adj.size();
+    bool found = false;
 
-public:
-    Graph(int x) {
-        V = x;
-        adj = vector<vector<int>>(V);
+    if (s == x) {
+        cout << "Found! Start Node = Search Node" << endl;
+        return;
     }
 
-    void addEdge( int u, int v) {
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
+    vector<bool> visited(V, false);
+    queue<int> q;
+    q.push(s);
+    visited[s] = true;
 
-    void BFS(int s, int x) {
-        bool ans = false;
-        if (s == x) {
-            cout << "Found! Start Node = Search Node" << endl;
-            return;
-        }
-
-        vector<bool> visited(V, false);
-        queue<int> q;
-        q.push(s);
-        visited[s] = true;
-
-        while (!q.empty()) {
-            int a = q.front();
-            if (a == x) {
-                ans = true;
-            }
-            cout << a << " ";
-            q.pop();
-
-            for (int i = 0; i < adj[a].size(); i++) {
-                int m = adj[a][i];
-                if (!visited[m]) {
-                    visited[m] = true;
-                    q.push(m);
-                }
-            }
-        }
-        cout << endl;
-        if (ans)
-            cout << "Found!" << endl;
-        else
-            cout << "Not Found!" << endl;
-    }
-
-    void BFSUtil(queue<int> &q, vector<bool> &visited, int x, bool &found) {
-        if (q.empty()) return;
-
+    cout << "BFS Iterative: ";
+    while (!q.empty()) {
         int a = q.front();
         q.pop();
         cout << a << " ";
-
-        if (a == x) {
-            found = true;
-            return;
-        }
+        if (a == x) found = true;
 
         for (int i = 0; i < adj[a].size(); i++) {
             int m = adj[a][i];
@@ -73,96 +32,71 @@ public:
                 q.push(m);
             }
         }
-
-        BFSUtil(q, visited, x, found);
     }
 
-    void BFSR(int s, int x) {
-        if (s == x) {
-            cout << "Found! Start Node = Search Node" << endl;
-            return;
-        }
+    cout << endl << (found ? "Found!" : "Not Found!") << endl;
+}
 
-        vector<bool> visited(V, false);
-        queue<int> q;
-        visited[s] = true;
-        q.push(s);
+void DFS(vector<vector<int>> &adj, int s, int x) {
+    int V = adj.size();
+    bool found = false;
 
-        bool found = false;
-        cout << "Recursive BFS : ";
-        BFSUtil(q, visited, x, found);
-
-        cout << endl;
-        if (found)
-            cout << "Found!" << endl;
-        else
-            cout << "Not Found!" << endl;
+    if (s == x) {
+        cout << "Found! Start Node = Search Node" << endl;
+        return;
     }
 
-    void DFS(int s, int x) {
-        bool ans = false;
-        if (s == x) {
-            cout << "Found! Start Node = Search Node" << endl;
-            return;
-        }
+    vector<bool> visited(V, false);
+    stack<int> st;
+    st.push(s);
+    visited[s] = true;
 
-        vector<bool> visited(V, false);
-        stack<int> st;
-        st.push(s);
-        visited[s] = true;
+    cout << "DFS Iterative: ";
+    while (!st.empty()) {
+        int a = st.top();
+        st.pop();
+        cout << a << " ";
+        if (a == x) found = true;
 
-        while (!st.empty()) {
-            int a = st.top();
-            if (a == x) {
-                ans = true;
-            }
-            cout << a << " ";
-            st.pop();
-
-            for (int i = 0; i < adj[a].size(); i++) {
-                int m = adj[a][i];
-                if (!visited[m]) {
-                    visited[m] = true;
-                    st.push(m);
-                }
-            }
-        }
-
-        cout << endl;
-        if (ans)
-            cout << "Found!" << endl;
-        else
-            cout << "Not Found!" << endl;
-    }
-
-    void DFSUtil(int s, int x, vector<bool> &visited, bool &found) {
-        visited[s] = true;
-        cout << s << " ";
-        if (s == x) {
-            found = true;
-            return;
-        }
-
-        for (int i = 0; i < adj[s].size(); i++) {
-            int v = adj[s][i];
-            if (!visited[v]) {
-                DFSUtil(v, x, visited, found);
-                if (found) return;
+        for (int i = 0; i < adj[a].size(); i++) {
+            int m = adj[a][i];
+            if (!visited[m]) {
+                visited[m] = true;
+                st.push(m);
             }
         }
     }
 
-    void DFSR(int s, int x) {
-        bool found = false;
-        vector<bool> visited(V, false);
-        DFSUtil(s, x, visited, found);
-        cout << endl;
-        if (found)
-            cout << "Found!" << endl;
-        else
-            cout << "Not Found!" << endl;
+    cout << endl << (found ? "Found!" : "Not Found!") << endl;
+}
+
+void DFSUtil(vector<vector<int>> &adj, vector<bool> &visited, bool &found, int s, int x) {
+    visited[s] = true;
+    cout << s << " ";
+    if (s == x) {
+        found = true;
+        return;
     }
-};
+
+    for (int i = 0; i < adj[s].size(); i++) {
+        int m = adj[s][i];
+        if (!visited[m]) {
+            DFSUtil(adj, visited, found, m, x);
+            if (found) return;
+        }
+    }
+}
+
+void DFSR(vector<vector<int>> &adj, int s, int x) {
+    int V = adj.size();
+    vector<bool> visited(V, false);
+    bool found = false;
+
+    cout << "DFS Recursive: ";
+    DFSUtil(adj, visited, found, s, x);
+
+    cout << endl << (found ? "Found!" : "Not Found!") << endl;
+}
 
 int main() {
     int V, E;
@@ -171,32 +105,43 @@ int main() {
     cout << "Enter number of edges: ";
     cin >> E;
 
-    Graph g(V);
-
-    cout << "Enter edges: " << endl;
+    vector<vector<int>> adj(V);
+    cout << "Enter edges (u v):" << endl;
     for (int i = 0; i < E; i++) {
         int u, v;
         cin >> u >> v;
-        g.addEdge(u, v);
+        adj[u].push_back(v);
+        adj[v].push_back(u); // undirected graph
     }
 
     int s, x;
-    cout << "Enter starting node for traversal: ";
+    cout << "Enter start node: ";
     cin >> s;
-    cout << "Enter node to search (x): ";
+    cout << "Enter node to search: ";
     cin >> x;
 
-    cout << endl << "BFS Iterative:" << endl;
-    g.BFS(s, x);
+    int choice;
+    cout << "\nChoose Traversal:\n";
+    cout << "1. BFS\n";
+    cout << "2. DFS (Iterative)\n";
+    cout << "3. DFS (Recursive)\n";
+    cout << "Enter your choice: ";
+    cin >> choice;
 
-    cout << endl << "BFS Recursive:" << endl;
-    g.BFSR(s, x);
-
-    cout << endl << "DFS Iterative:" << endl;
-    g.DFS(s, x);
-
-    cout << endl << "DFS Recursive:" << endl;
-    g.DFSR(s, x);
+    cout << endl;
+    switch (choice) {
+        case 1:
+            BFS(adj, s, x);
+            break;
+        case 2:
+            DFS(adj, s, x);
+            break;
+        case 3:
+            DFSR(adj, s, x);
+            break;
+        default:
+            cout << "Invalid Choice" << endl;
+    }
 
     return 0;
 }
